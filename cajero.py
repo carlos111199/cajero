@@ -11,7 +11,8 @@ def consulta(array):
             print("2. Retiro")
             print("3. Deposito")
             print("4. Pago de servicios")
-            print("5. Salir")
+            print("5. Donar")
+            print("6. Salir")
             opt=int(input())
             match opt:
                 case 1:
@@ -23,6 +24,8 @@ def consulta(array):
                 case 4:
                     servicios()
                 case 5:
+                    retiro(array['pin'], True)
+                case 6:
                     break #El break saca inmediatamente del for 
             movimiento=int(input("Ingrese 1 para realizar otro movimiento: "))#Cualquier dato distinto a 1 te saca alv
     else:
@@ -38,24 +41,35 @@ def saldo(pin):
                 break
 
 
-#Funciones que hacen ustedes xdd
-def retiro(pin):
-    retirar = int(input('Cantidad a retirar: '))
+# Función para retirar 
+def retiro(pin, donacion):
+    if (donacion):
+        retirar = int(input('Cantidad a donar: '))
+    else :
+        retirar = int(input('Cantidad a retirar: '))
+
     with open('BD.json') as database:
         data = json.load(database)
         for i in data['usuario']:
             if (pin == i['pin']):
-                if (retirar <= i['saldo']):
-                    print('Se han retirado $', retirar, ' de $', i['saldo'])
+                if (retirar <= i['saldo']): # Verifica que el usuario tenga suficiente saldo
+                    if (donacion):
+                        print('Haz donado $', retirar, '. Muchas gracias!')
+                    else :
+                        print('Se han retirado $', retirar, ' de $', i['saldo'])
                     i['saldo'] = i['saldo'] - retirar
                     break
                 else:
-                    print('No cuentas con la cantidad suficiente para retirar')
+                    if (donacion):
+                        print('No cuentas con el dinero suficiente para realizar esta donacion')
+                    else :
+                        print('No cuentas con la cantidad suficiente para retirar')
                     break
 
     with open('BD.json', 'w') as database:
         json.dump(data, database)
 
+# Función para depositar
 def deposito(pin):
     depositar = int(input('Cantidad a depositar: '))
     with open('BD.json') as database:
