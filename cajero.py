@@ -15,11 +15,11 @@ def consulta(array):
             opt=int(input())
             match opt:
                 case 1:
-                    saldo(array["saldo"])
+                    saldo(array['pin'])
                 case 2:
-                    retiro()
+                    retiro(array['pin'])
                 case 3:
-                    deposito()
+                    deposito(array['pin'])
                 case 4:
                     servicios()
                 case 5:
@@ -29,15 +29,45 @@ def consulta(array):
         print("PIN incorrecto")
 
 #Funcion para mostrar el saldo
-def saldo(saldo):
-    print("Su saldo es de $", saldo)
+def saldo(pin):
+    with open('BD.json') as database:
+        data = json.load(database)
+        for i in data['usuario']:
+            if (pin == i['pin']):
+                print('El saldo es de $', i['saldo'])
+                break
+
 
 #Funciones que hacen ustedes xdd
-def retiro():
-    print("Aki va una funcion")
+def retiro(pin):
+    retirar = int(input('Cantidad a retirar: '))
+    with open('BD.json') as database:
+        data = json.load(database)
+        for i in data['usuario']:
+            if (pin == i['pin']):
+                if (retirar <= i['saldo']):
+                    print('Se han retirado $', retirar, ' de $', i['saldo'])
+                    i['saldo'] = i['saldo'] - retirar
+                    break
+                else:
+                    print('No cuentas con la cantidad suficiente para retirar')
+                    break
 
-def deposito():
-    print("Aki va otra funcion")
+    with open('BD.json', 'w') as database:
+        json.dump(data, database)
+
+def deposito(pin):
+    depositar = int(input('Cantidad a depositar: '))
+    with open('BD.json') as database:
+        data = json.load(database)
+        for i in data['usuario']:
+            if (pin == i['pin']):
+                print('Se han depositado $', depositar, ' a $', i['saldo'])
+                i['saldo'] = i['saldo'] + depositar
+                    
+
+    with open('BD.json', 'w') as database:
+        json.dump(data, database)
 
 def servicios():
     print("Aki va ooootra funcion")
